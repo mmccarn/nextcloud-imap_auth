@@ -1,6 +1,6 @@
-External user authentication
+Legacy IMAP Authentication
 ============================
-**Authenticate user login against FTP, IMAP or SMB.**
+**Authenticate user login against IMAP using the code from user_external v0.5.0**
 
 Passwords are not stored locally; authentication always happens against
 the remote server.
@@ -14,68 +14,35 @@ their configured display name.
 If something does not work, check the log file at `nextcloud/data/nextcloud.log`.
 
 
-FTP
----
-Authenticate Nextcloud users against a FTP server.
-
-
-### Configuration
-You only need to supply the FTP host name or IP.
-
-The second - optional - parameter determines if SSL should be used or not.
-
-Add the following to `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_FTP',
-            'arguments' => array('127.0.0.1'),
-        ),
-    ),
-
-To enable SSL connections via `ftps`, append a second parameter `true`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_FTP',
-            'arguments' => array('127.0.0.1', true),
-        ),
-    ),
-
-
-### Dependencies
-PHP automatically contains basic FTP support.
-
-For SSL-secured FTP connections via ftps, the PHP [openssl extension][0]
-needs to be activated.
-
-[0]: http://php.net/openssl
-
-
-
 IMAP
 ----
 Authenticate Nextcloud users against an IMAP server.
-IMAP user and password need to be given for the Nextcloud login
+IMAP user and password need to be given for the Nextcloud login.
 
 
 ### Configuration
+The parameters are `host, port, sslmode, domain`.
+Possible values for sslmode are `ssl` or `tls`.
 Add the following to your `config.php`:
 
     'user_backends' => array(
         array(
-            'class' => 'OC_User_IMAP',
+            'class' => 'OC_IMAP_Auth',
             'arguments' => array(
-                '{127.0.0.1:143/imap/readonly}', 'example.com'
+                '127.0.0.1', 993, 'ssl', 'example.com'
             ),
         ),
     ),
 
-This connects to the IMAP server on IP `127.0.0.1`, in readonly mode.
-If a domain name (e.g. example.com) is specified, then this makes sure that 
+This connects to the IMAP server on IP `127.0.0.1`.
+The default port is 143. However, note that parameter order matters and if
+you want to restrict the domain (4th parameter), you need to also specify
+the port (2nd parameter) and sslmode (3rd parameter; set to `null` for
+insecure connection).
+If a domain name (e.g. example.com) is specified, then this makes sure that
 only users from this domain will be allowed to login. After successfull
 login the domain part will be striped and the rest used as username in
-NextCloud. e.g. 'username@example.com' will be 'username' in NextCloud.
+Nextcloud. e.g. 'username@example.com' will be 'username' in Nextcloud.
 
 Read the [imap_open][0] PHP manual page to learn more about the allowed
 parameters.
@@ -89,45 +56,6 @@ The PHP [IMAP extension][1] has to be activated.
 [1]: http://php.net/imap
 
 
+### Switching from user_external
+When switching from user_external, change the user_backend class from 'OC_User_IMAP' to 'OC_IMAP_Auth'.
 
-Samba
------
-Utilizes the `smbclient` executable to authenticate against a windows
-network machine via SMB.
-
-
-### Configuration
-The only supported parameter is the hostname of the remote machine.
-
-Add the following to your `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_SMB',
-            'arguments' => array('127.0.0.1'),
-        ),
-    ),
-
-
-### Dependencies
-The `smbclient` executable needs to be installed and accessible within `$PATH`.
-
-
-WebDAV
-------
-
-Authenticate users by a WebDAV call. You can use any WebDAV server, Nextcloud server or other web server to authenticate. It should return http 200 for right credentials and http 401 for wrong ones.
-
-Attention: This app is not compatible with the LDAP user and group backend. This app is not the WebDAV interface of Nextcloud, if you don't understand what it does then do not enable it.
-
-### Configuration
-The only supported parameter is the URL of the web server.
-
-Add the following to your `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => '\OCA\User_External\WebDAVAuth',
-            'arguments' => array('https://example.com/webdav'),
-        ),
-    ),
