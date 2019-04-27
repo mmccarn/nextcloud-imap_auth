@@ -63,7 +63,7 @@ Add the following to your `config.php`:
 
     'user_backends' => array(
         array(
-            'class' => 'OC_User_IMAP',
+            'class' => 'OC_IMAP_Auth',
             'arguments' => array(
                 '{127.0.0.1:143/imap/readonly}', 'example.com'
             ),
