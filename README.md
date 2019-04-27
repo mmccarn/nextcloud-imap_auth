@@ -1,6 +1,6 @@
-Legacy IMAP Authentication
+External user authentication
 ============================
-**Authenticate user login against IMAP using the code from user_external v0.5.0**
+**Authenticate user login against FTP, IMAP or SMB.**
 
 Passwords are not stored locally; authentication always happens against
 the remote server.
@@ -12,6 +12,45 @@ update the database table's `backend` field, or your users will lose
 their configured display name.
 
 If something does not work, check the log file at `nextcloud/data/nextcloud.log`.
+
+
+FTP
+---
+Authenticate Nextcloud users against a FTP server.
+
+
+### Configuration
+You only need to supply the FTP host name or IP.
+
+The second - optional - parameter determines if SSL should be used or not.
+
+Add the following to `config.php`:
+
+    'user_backends' => array(
+        array(
+            'class' => 'OC_User_FTP',
+            'arguments' => array('127.0.0.1'),
+        ),
+    ),
+
+To enable SSL connections via `ftps`, append a second parameter `true`:
+
+    'user_backends' => array(
+        array(
+            'class' => 'OC_User_FTP',
+            'arguments' => array('127.0.0.1', true),
+        ),
+    ),
+
+
+### Dependencies
+PHP automatically contains basic FTP support.
+
+For SSL-secured FTP connections via ftps, the PHP [openssl extension][FTP_0]
+needs to be activated.
+
+[FTP_0]: http://php.net/openssl
+
 
 
 IMAP
@@ -27,7 +66,7 @@ Add the following to your `config.php`:
 
     'user_backends' => array(
         array(
-            'class' => 'OC_IMAP_Auth',
+            'class' => 'OC_User_IMAP',
             'arguments' => array(
                 '127.0.0.1', 993, 'ssl', 'example.com'
             ),
@@ -44,18 +83,100 @@ only users from this domain will be allowed to login. After successfull
 login the domain part will be striped and the rest used as username in
 Nextcloud. e.g. 'username@example.com' will be 'username' in Nextcloud.
 
-Read the [imap_open][0] PHP manual page to learn more about the allowed
-parameters.
 
-[0]: http://php.net/imap_open#refsect1-function.imap-open-parameters
+
+Samba
+-----
+Utilizes the `smbclient` executable to authenticate against a windows
+network machine via SMB.
+
+
+### Configuration
+The only supported parameter is the hostname of the remote machine.
+
+Add the following to your `config.php`:
+
+    'user_backends' => array(
+        array(
+            'class' => 'OC_User_SMB',
+            'arguments' => array('127.0.0.1'),
+        ),
+    ),
 
 
 ### Dependencies
-The PHP [IMAP extension][1] has to be activated.
-
-[1]: http://php.net/imap
+The `smbclient` executable needs to be installed and accessible within `$PATH`.
 
 
-### Switching from user_external
-When switching from user_external, change the user_backend class from 'OC_User_IMAP' to 'OC_IMAP_Auth'.
+WebDAV
+------
+
+Authenticate users by a WebDAV call. You can use any WebDAV server, Nextcloud server or other web server to authenticate. It should return http 200 for right credentials and http 401 for wrong ones.
+
+Attention: This app is not compatible with the LDAP user and group backend. This app is not the WebDAV interface of Nextcloud, if you don't understand what it does then do not enable it.
+
+### Configuration
+The only supported parameter is the URL of the web server.
+
+Add the following to your `config.php`:
+
+    'user_backends' => array(
+        array(
+            'class' => '\OCA\User_External\WebDAVAuth',
+            'arguments' => array('https://example.com/webdav'),
+        ),
+    ),
+
+
+BasicAuth
+------
+
+Authenticate users by an [HTTP Basic access authentication][BasicAuth_0]  call.
+HTTP server of your choice to authenticate. It should return HTTP 2xx for correct credentials and an appropriate other error code for wrong ones or refused access.
+
+### Configuration
+The only supported parameter is the URL of the web server where the authentication happens.
+
+Add the following to your `config.php`:
+
+    'user_backends' => array(
+        array(
+            'class' => 'OC_User_BasicAuth',
+            'arguments' => array('https://example.com/basic_auth'),
+        ),
+    ),
+
+
+[BasicAuth_0]: https://en.wikipedia.org/wiki/Basic_access_authentication
+
+
+XMPP (Prosody)
+----
+Authenticate Nextcloud users against a Prosody XMPP MySQL database.
+Prosody user and password need to be given for the Nextcloud login
+
+
+### Configuration
+Add the following to your `config.php`:
+
+    'user_backends' => array (
+        0 => array (
+            'class' => 'OC_User_XMPP',
+                'arguments' => array (
+                    0 => 'dbhost',
+                    1 => 'prosodydb',
+                    2 => 'dbuser',
+                    3 => 'dbuserpassword',
+                    4 => 'xmppdomain',
+                ),
+            ),
+    ),
+
+
+Alternatives
+------------
+Other extensions allow connecting to external user databases directly via SQL, which may be faster:
+
+* [user_sql](https://github.com/nextcloud/user_sql)
+* [user_backend_sql_raw](https://github.com/PanCakeConnaisseur/user_backend_sql_raw)
 
