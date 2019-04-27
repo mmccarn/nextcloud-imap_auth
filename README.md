@@ -1,6 +1,6 @@
-External user authentication
+Legacy IMAP Authentication
 ============================
-**Authenticate user login against FTP, IMAP or SMB.**
+**Authenticate user login against IMAP using the code from user_external v0.5.0**
 
 Passwords are not stored locally; authentication always happens against
 the remote server.
@@ -14,45 +14,6 @@ their configured display name.
 If something does not work, check the log file at `nextcloud/data/nextcloud.log`.
 
 
-FTP
----
-Authenticate Nextcloud users against a FTP server.
-
-
-### Configuration
-You only need to supply the FTP host name or IP.
-
-The second - optional - parameter determines if SSL should be used or not.
-
-Add the following to `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_FTP',
-            'arguments' => array('127.0.0.1'),
-        ),
-    ),
-
-To enable SSL connections via `ftps`, append a second parameter `true`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_FTP',
-            'arguments' => array('127.0.0.1', true),
-        ),
-    ),
-
-
-### Dependencies
-PHP automatically contains basic FTP support.
-
-For SSL-secured FTP connections via ftps, the PHP [openssl extension][0]
-needs to be activated.
-
-[0]: http://php.net/openssl
-
-
-
 IMAP
 ----
 Authenticate Nextcloud users against an IMAP server.
@@ -64,7 +25,7 @@ Add the following to your `config.php`:
 
     'user_backends' => array(
         array(
-            'class' => 'OC_User_IMAP',
+            'class' => 'OC_IMAP_Auth',
             'arguments' => array(
                 '{127.0.0.1:143/imap/readonly}', 'example.com'
             ),
@@ -88,46 +49,5 @@ The PHP [IMAP extension][1] has to be activated.
 
 [1]: http://php.net/imap
 
-
-
-Samba
------
-Utilizes the `smbclient` executable to authenticate against a windows
-network machine via SMB.
-
-
-### Configuration
-The only supported parameter is the hostname of the remote machine.
-
-Add the following to your `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => 'OC_User_SMB',
-            'arguments' => array('127.0.0.1'),
-        ),
-    ),
-
-
-### Dependencies
-The `smbclient` executable needs to be installed and accessible within `$PATH`.
-
-
-WebDAV
-------
-
-Authenticate users by a WebDAV call. You can use any WebDAV server, Nextcloud server or other web server to authenticate. It should return http 200 for right credentials and http 401 for wrong ones.
-
-Attention: This app is not compatible with the LDAP user and group backend. This app is not the WebDAV interface of Nextcloud, if you don't understand what it does then do not enable it.
-
-### Configuration
-The only supported parameter is the URL of the web server.
-
-Add the following to your `config.php`:
-
-    'user_backends' => array(
-        array(
-            'class' => '\OCA\User_External\WebDAVAuth',
-            'arguments' => array('https://example.com/webdav'),
-        ),
-    ),
+### Switching from user_external
+When switching from user_external, change the user_backend class from 'OC_User_IMAP' to 'OC_IMAP_Auth'.
