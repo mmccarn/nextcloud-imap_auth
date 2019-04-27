@@ -8,7 +8,7 @@
 
 class Test_User_Imap extends \Test\TestCase {
 	/**
-	 * @var OC_User_IMAP $instance
+	 * @var OC_IMAP_Auth $instance
 	 */
 	private $instance;
 
@@ -25,7 +25,7 @@ class Test_User_Imap extends \Test\TestCase {
 		parent::setUp();
 
 		$config=$this->getConfig();
-		$this->instance=new OC_User_IMAP($config['imap']['mailbox']);
+		$this->instance=new OC_IMAP_Auth($config['imap']['mailbox']);
 	}
 
 	function testLogin() {

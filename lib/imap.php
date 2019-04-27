@@ -15,7 +15,7 @@
  * @license  http://www.gnu.org/licenses/agpl AGPL
  * @link     http://github.com/owncloud/apps
  */
-class OC_User_IMAP extends \OCA\user_external\Base {
+class OC_IMAP_Auth extends \OCA\imap_auth\Base {
 	private $mailbox;
 	private $domain;
 
@@ -42,7 +42,7 @@ class OC_User_IMAP extends \OCA\user_external\Base {
 	 */
 	public function checkPassword($uid, $password) {
 		if (!function_exists('imap_open')) {
-			OCP\Util::writeLog('user_external', 'ERROR: PHP imap extension is not installed', OCP\Util::ERROR);
+			OCP\Util::writeLog('imap_auth', 'ERROR: PHP imap extension is not installed', OCP\Util::ERROR);
 			return false;
 		}
 

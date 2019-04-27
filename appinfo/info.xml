@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <info>
-	<id>user_external</id>
-	<name>External user support</name>
-	<summary>Use external user authentication methods like IMAP, SMB and FTP</summary>
-	<description>Use external user authentication methods like IMAP, SMB and FTP</description>
+	<id>imap_auth</id>
+	<name>imap authentication</name>
+	<summary>Authenticate users using external IMAP accounts</summary>
+	<description>Authenticate users using external IMAP accounts. Based on traditional user_external v0.5.0</description>
 	<category>tools</category>
 	<category>integration</category>
 	<licence>AGPL</licence>
