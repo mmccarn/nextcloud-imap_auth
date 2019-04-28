@@ -44,15 +44,16 @@ Using the instructions in the [admin manual](https://docs.nextcloud.com/server/1
       [
               "path"     => OC::$SERVERROOT . "/apps",
               "url"      => "/apps",
-              "writable" => false,
+              "writable" => true,
       ],
       [
               "path"     => OC::$SERVERROOT . "/apps-local",
               "url"      => "/apps-local",
-              "writable" => true,
+              "writable" => false,
       ],
   ],
 ```
+Note: set the default apps folder as 'writable' so that apps installed through the app store go to the usual location
 
 #### Enable the new app
 Login to your Nexcloud instance as an administrator, browse to 'Apps', locate 'IMAP Authentication' and click 'Enable'
