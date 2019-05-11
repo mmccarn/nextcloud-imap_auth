@@ -18,6 +18,7 @@
 class OC_IMAP_Auth extends \OCA\imap_auth\Base {
 	private $mailbox;
 	private $domain;
+        private $dropdomain;
 
 	/**
 	 * Create new IMAP authentication provider
@@ -26,10 +27,11 @@ class OC_IMAP_Auth extends \OCA\imap_auth\Base {
 	 *                        {127.0.0.1:143/imap/readonly}
 	 * @param string $domain  If provided, loging will be restricted to this domain
 	 */
-	public function __construct($mailbox, $domain = '') {
+	public function __construct($mailbox, $domain = '', $dropdomain = TRUE) {
 		parent::__construct($mailbox);
 		$this->mailbox=$mailbox;
 		$this->domain=$domain;
+                $this->dropdomain=$dropdomain;
 	}
 
 	/**
@@ -65,8 +67,9 @@ class OC_IMAP_Auth extends \OCA\imap_auth\Base {
 		if(count($users) === 1) {
 			$username = $uid;
 			$uid = $users[0];
- 		// Check if we only want logins from ONE domain and strip the domain part from UID		
-		}elseif($this->domain != '') {
+ 		// Check if we only want logins from ONE domain and strip the domain part from UID
+                // if $dropdomain is TRUE		
+		}elseif($this->dropdomain && $this->domain != '') {
  			$pieces = explode('@', $uid);
  			if(count($pieces) == 1) {
  				$username = $uid . "@" . $this->domain;
