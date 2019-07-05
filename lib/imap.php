@@ -82,6 +82,8 @@ class OC_IMAP_Auth extends \OCA\imap_auth\Base {
  		}else{
  			$username = $uid;
  		}
+
+                OCP\Util::writeLog('imap_auth', 'DEBUG: '. $this->mailbox . " " . $this->username, OCP\Util::DEBUG);
  
  		$mbox = @imap_open($this->mailbox, $username, $password, OP_HALFOPEN, 1);
 		imap_errors();
